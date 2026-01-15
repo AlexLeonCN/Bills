@@ -9,4 +9,5 @@ public class Project {
     private String name;
     private String desc;
     private LocalDateTime createTime;
+    private LocalDateTime updateTime;
 }
