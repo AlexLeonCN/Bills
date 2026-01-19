@@ -1,6 +1,8 @@
 package org.alex.bills.utils;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -41,6 +43,17 @@ public final class ExcelUtils {
             result.add(values);
         }
         return result;
+    }
+
+    public static List<List<String>> csvToList(File file) {
+        if (file == null) {
+            return List.of();
+        }
+        try (InputStream inputStream = new FileInputStream(file)) {
+            return csvToList(inputStream);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     public static List<List<String>> csvToList(InputStream inputStream) {
