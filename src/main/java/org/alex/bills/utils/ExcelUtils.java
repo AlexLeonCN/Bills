@@ -1,5 +1,12 @@
 package org.alex.bills.utils;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PushbackReader;
+import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.poi.ss.usermodel.Cell;
@@ -32,6 +39,90 @@ public final class ExcelUtils {
                 values.add(value);
             }
             result.add(values);
+        }
+        return result;
+    }
+
+    public static List<List<String>> csvToList(InputStream inputStream) {
+        if (inputStream == null) {
+            return List.of();
+        }
+        List<List<String>> result = new ArrayList<>();
+        try (PushbackReader reader = new PushbackReader(
+                new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8)), 1)) {
+            List<String> row = new ArrayList<>();
+            StringBuilder value = new StringBuilder();
+            boolean inQuotes = false;
+            boolean lastCharWasDelimiter = false;
+            boolean sawAnyChar = false;
+            int ch;
+            while ((ch = reader.read()) != -1) {
+                sawAnyChar = true;
+                char c = (char) ch;
+                if (inQuotes) {
+                    if (c == '"') {
+                        int next = reader.read();
+                        if (next == '"') {
+                            value.append('"');
+                        } else {
+                            inQuotes = false;
+                            if (next != -1) {
+                                reader.unread(next);
+                            }
+                        }
+                    } else {
+                        value.append(c);
+                    }
+                    lastCharWasDelimiter = false;
+                    continue;
+                }
+
+                if (c == ',') {
+                    row.add(value.toString());
+                    value.setLength(0);
+                    lastCharWasDelimiter = true;
+                    continue;
+                }
+
+                if (c == '\n' || c == '\r') {
+                    if (c == '\r') {
+                        int next = reader.read();
+                        if (next != '\n' && next != -1) {
+                            reader.unread(next);
+                        }
+                    }
+                    row.add(value.toString());
+                    value.setLength(0);
+                    result.add(row);
+                    row = new ArrayList<>();
+                    lastCharWasDelimiter = false;
+                    continue;
+                }
+
+                if (c == '"') {
+                    if (value.length() == 0) {
+                        inQuotes = true;
+                    } else {
+                        value.append(c);
+                    }
+                    lastCharWasDelimiter = false;
+                    continue;
+                }
+
+                value.append(c);
+                lastCharWasDelimiter = false;
+            }
+
+            if (!sawAnyChar) {
+                return List.of();
+            }
+
+            if (lastCharWasDelimiter || value.length() > 0 || !row.isEmpty()) {
+                row.add(value.toString());
+                result.add(row);
+            }
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
         }
         return result;
     }
