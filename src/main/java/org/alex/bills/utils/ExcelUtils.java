@@ -26,6 +26,7 @@ public final class ExcelUtils {
         }
         List<List<String>> result = new ArrayList<>();
         DataFormatter formatter = new DataFormatter();
+        int maxColumns = 0;
         int lastRowNum = sheet.getLastRowNum();
         for (int rowIndex = 0; rowIndex <= lastRowNum; rowIndex++) {
             Row row = sheet.getRow(rowIndex);
@@ -34,6 +35,7 @@ public final class ExcelUtils {
                 continue;
             }
             int lastCellNum = Math.max(row.getLastCellNum(), 0);
+            maxColumns = Math.max(maxColumns, lastCellNum);
             List<String> values = new ArrayList<>(lastCellNum);
             for (int cellIndex = 0; cellIndex < lastCellNum; cellIndex++) {
                 Cell cell = row.getCell(cellIndex, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
@@ -42,6 +44,7 @@ public final class ExcelUtils {
             }
             result.add(values);
         }
+        normalizeRowLengths(result, maxColumns);
         return result;
     }
 
@@ -62,7 +65,12 @@ public final class ExcelUtils {
         }
         try (PushbackReader reader = new PushbackReader(
                 new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8)), 1)) {
-            return parseCsv(reader);
+            List<List<String>> rows = parseCsv(reader);
+            if (rows.isEmpty()) {
+                return rows;
+            }
+            normalizeRowLengths(rows);
+            return rows;
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
@@ -149,6 +157,26 @@ public final class ExcelUtils {
             state.result.add(state.row);
         }
         return state.result;
+    }
+
+    private static void normalizeRowLengths(List<List<String>> rows) {
+        int maxColumns = 0;
+        for (List<String> row : rows) {
+            maxColumns = Math.max(maxColumns, row.size());
+        }
+        normalizeRowLengths(rows, maxColumns);
+    }
+
+    private static void normalizeRowLengths(List<List<String>> rows, int maxColumns) {
+        if (maxColumns <= 0) {
+            return;
+        }
+        for (List<String> row : rows) {
+            int missing = maxColumns - row.size();
+            for (int i = 0; i < missing; i++) {
+                row.add("");
+            }
+        }
     }
 
     private static final class CsvParseState {
