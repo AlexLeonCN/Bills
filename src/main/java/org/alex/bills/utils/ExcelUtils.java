@@ -60,83 +60,103 @@ public final class ExcelUtils {
         if (inputStream == null) {
             return List.of();
         }
-        List<List<String>> result = new ArrayList<>();
         try (PushbackReader reader = new PushbackReader(
                 new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8)), 1)) {
-            List<String> row = new ArrayList<>();
-            StringBuilder value = new StringBuilder();
-            boolean inQuotes = false;
-            boolean lastCharWasDelimiter = false;
-            boolean sawAnyChar = false;
-            int ch;
-            while ((ch = reader.read()) != -1) {
-                sawAnyChar = true;
-                char c = (char) ch;
-                if (inQuotes) {
-                    if (c == '"') {
-                        int next = reader.read();
-                        if (next == '"') {
-                            value.append('"');
-                        } else {
-                            inQuotes = false;
-                            if (next != -1) {
-                                reader.unread(next);
-                            }
-                        }
-                    } else {
-                        value.append(c);
-                    }
-                    lastCharWasDelimiter = false;
-                    continue;
-                }
-
-                if (c == ',') {
-                    row.add(value.toString());
-                    value.setLength(0);
-                    lastCharWasDelimiter = true;
-                    continue;
-                }
-
-                if (c == '\n' || c == '\r') {
-                    if (c == '\r') {
-                        int next = reader.read();
-                        if (next != '\n' && next != -1) {
-                            reader.unread(next);
-                        }
-                    }
-                    row.add(value.toString());
-                    value.setLength(0);
-                    result.add(row);
-                    row = new ArrayList<>();
-                    lastCharWasDelimiter = false;
-                    continue;
-                }
-
-                if (c == '"') {
-                    if (value.length() == 0) {
-                        inQuotes = true;
-                    } else {
-                        value.append(c);
-                    }
-                    lastCharWasDelimiter = false;
-                    continue;
-                }
-
-                value.append(c);
-                lastCharWasDelimiter = false;
-            }
-
-            if (!sawAnyChar) {
-                return List.of();
-            }
-
-            if (lastCharWasDelimiter || value.length() > 0 || !row.isEmpty()) {
-                row.add(value.toString());
-                result.add(row);
-            }
+            return parseCsv(reader);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
-        return result;
+    }
+
+    private static List<List<String>> parseCsv(PushbackReader reader) throws IOException {
+        CsvParseState state = new CsvParseState();
+        int ch;
+        while ((ch = reader.read()) != -1) {
+            state.sawAnyChar = true;
+            processChar(reader, state, (char) ch);
+        }
+        return finalizeCsv(state);
+    }
+
+    private static void processChar(PushbackReader reader, CsvParseState state, char c) throws IOException {
+        if (state.inQuotes) {
+            handleQuotedChar(reader, state, c);
+            return;
+        }
+        if (c == ',') {
+            addValue(state);
+            state.lastCharWasDelimiter = true;
+            return;
+        }
+        if (c == '\n' || c == '\r') {
+            handleLineBreak(reader, state, c);
+            return;
+        }
+        if (c == '"') {
+            if (state.value.length() == 0) {
+                state.inQuotes = true;
+            } else {
+                state.value.append(c);
+            }
+            state.lastCharWasDelimiter = false;
+            return;
+        }
+        state.value.append(c);
+        state.lastCharWasDelimiter = false;
+    }
+
+    private static void handleQuotedChar(PushbackReader reader, CsvParseState state, char c) throws IOException {
+        if (c == '"') {
+            int next = reader.read();
+            if (next == '"') {
+                state.value.append('"');
+            } else {
+                state.inQuotes = false;
+                if (next != -1) {
+                    reader.unread(next);
+                }
+            }
+        } else {
+            state.value.append(c);
+        }
+        state.lastCharWasDelimiter = false;
+    }
+
+    private static void handleLineBreak(PushbackReader reader, CsvParseState state, char c) throws IOException {
+        if (c == '\r') {
+            int next = reader.read();
+            if (next != '\n' && next != -1) {
+                reader.unread(next);
+            }
+        }
+        addValue(state);
+        state.result.add(state.row);
+        state.row = new ArrayList<>();
+        state.lastCharWasDelimiter = false;
+    }
+
+    private static void addValue(CsvParseState state) {
+        state.row.add(state.value.toString());
+        state.value.setLength(0);
+    }
+
+    private static List<List<String>> finalizeCsv(CsvParseState state) {
+        if (!state.sawAnyChar) {
+            return List.of();
+        }
+        if (state.lastCharWasDelimiter || state.value.length() > 0 || !state.row.isEmpty()) {
+            addValue(state);
+            state.result.add(state.row);
+        }
+        return state.result;
+    }
+
+    private static final class CsvParseState {
+        private final List<List<String>> result = new ArrayList<>();
+        private List<String> row = new ArrayList<>();
+        private final StringBuilder value = new StringBuilder();
+        private boolean inQuotes;
+        private boolean lastCharWasDelimiter;
+        private boolean sawAnyChar;
     }
 }
