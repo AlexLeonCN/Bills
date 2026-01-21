@@ -16,8 +16,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
+import org.alex.bills.commons.ErrorConstant;
+import org.alex.bills.commons.Pair;
 import org.alex.bills.commons.utils.SnowflakeIdGenerator;
 import org.alex.bills.constants.BillImportConstants;
+import org.alex.bills.exception.ImportException;
 import org.alex.bills.mapper.BillMapper;
 import org.alex.bills.model.Bill;
 import org.alex.bills.model.BillImportResult;
@@ -45,11 +48,11 @@ public class ExcelServiceImpl implements ExcelService {
     @Transactional
     public BillImportResult importBills(MultipartFile file) {
         if (file == null || file.isEmpty()) {
-            throw new IllegalArgumentException("导入文件为空");
+            throw new ImportException(ErrorConstant.Import.FILE_EMPTY);
         }
         List<List<String>> rows = readRows(file);
         if (rows.isEmpty()) {
-            throw new IllegalArgumentException("导入文件内容为空");
+            throw new ImportException(ErrorConstant.Import.FILE_CONTENT_EMPTY);
         }
         Map<String, Integer> headerIndex = buildHeaderIndex(rows.get(0));
         Map<String, BiConsumer<Bill, String>> parsers = buildHeaderParsers();
@@ -96,7 +99,7 @@ public class ExcelServiceImpl implements ExcelService {
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
-        throw new IllegalArgumentException("不支持的文件类型");
+        throw new ImportException(ErrorConstant.Import.FILE_TYPE_UNSUPPORTED);
     }
 
     private List<List<String>> readExcel(InputStream inputStream) throws IOException {
@@ -117,7 +120,8 @@ public class ExcelServiceImpl implements ExcelService {
                 continue;
             }
             if (headerIndex.putIfAbsent(header, i) != null) {
-                throw new IllegalArgumentException("表头重复: " + header);
+                throw new ImportException(new Pair<>(ErrorConstant.Import.HEADER_DUPLICATE.getKey(),
+                        ErrorConstant.Import.HEADER_DUPLICATE.getValue() + ": " + header));
             }
         }
         validateHeader(headerIndex.keySet());
@@ -139,7 +143,7 @@ public class ExcelServiceImpl implements ExcelService {
         if (!extra.isEmpty()) {
             message.append("，多余: ").append(String.join("、", extra));
         }
-        throw new IllegalArgumentException(message.toString());
+        throw new ImportException(new Pair<>(ErrorConstant.Import.HEADER_INVALID.getKey(), message.toString()));
     }
 
     private Map<String, BiConsumer<Bill, String>> buildHeaderParsers() {
