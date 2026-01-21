@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.alex.bills.mapper.BillMapper">
+
+    <resultMap id="BillResultMap" type="org.alex.bills.model.Bill">
+        <id column="id" property="id"/>
+        <result column="ledger" property="ledger"/>
+        <result column="category" property="category"/>
+        <result column="sub_category" property="subCategory"/>
+        <result column="currency" property="currency"/>
+        <result column="amount" property="amount"/>
+        <result column="account" property="account"/>
+        <result column="recorder" property="recorder"/>
+        <result column="bill_date" property="billDate"/>
+        <result column="bill_time" property="billTime"/>
+        <result column="tag" property="tag"/>
+        <result column="remark" property="remark"/>
+        <result column="income_expense" property="incomeExpense"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <insert id="insertBatch" parameterType="java.util.List">
+        insert into bill (
+        id,
+        ledger,
+        category,
+        sub_category,
+        currency,
+        amount,
+        account,
+        recorder,
+        bill_date,
+        bill_time,
+        tag,
+        remark,
+        income_expense,
+        create_time,
+        update_time
+        )
+        values
+        <foreach collection="bills" item="item" separator=",">
+            (
+            #{item.id},
+            #{item.ledger},
+            #{item.category},
+            #{item.subCategory},
+            #{item.currency},
+            #{item.amount},
+            #{item.account},
+            #{item.recorder},
+            #{item.billDate, jdbcType=DATE},
+            #{item.billTime, jdbcType=TIME},
+            #{item.tag},
+            #{item.remark},
+            #{item.incomeExpense},
+            #{item.createTime, jdbcType=TIMESTAMP},
+            #{item.updateTime, jdbcType=TIMESTAMP}
+            )
+        </foreach>
+    </insert>
+</mapper>
