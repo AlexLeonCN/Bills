@@ -29,7 +29,7 @@ public class ResultInfo<T> {
         return new ResultInfo<>(false, code, message, null);
     }
 
-    public static <T> ResultInfo<T> ofError(Pair<?, ?> pair) {
+    public static <T> ResultInfo<T> ofError(Pair<Integer, String> pair) {
         if (pair == null) {
             return ofError();
         }
