@@ -29,16 +29,11 @@ public class ResultInfo<T> {
         return new ResultInfo<>(false, code, message, null);
     }
 
-    public static <T> ResultInfo<T> ofError(Pair<?> pair) {
+    public static <T> ResultInfo<T> ofError(Pair<Integer, String> pair) {
         if (pair == null) {
             return ofError();
         }
-        Object key = pair.getKey();
-        Object value = pair.getValue();
-        if (!(key instanceof Number) || !(value instanceof String)) {
-            return ofError();
-        }
-        return ofError(((Number) key).intValue(), (String) value);
+        return ofError(pair.getKey(), pair.getValue());
     }
 
     public boolean isSuccess() {

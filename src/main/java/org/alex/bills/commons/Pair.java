@@ -1,19 +1,19 @@
 package org.alex.bills.commons;
 
-public class Pair<T> {
-    private final T key;
-    private final T value;
+public class Pair<K, V> {
+    private final K key;
+    private final V value;
 
-    public Pair(T key, T value) {
+    public Pair(K key, V value) {
         this.key = key;
         this.value = value;
     }
 
-    public T getKey() {
+    public K getKey() {
         return key;
     }
 
-    public T getValue() {
+    public V getValue() {
         return value;
     }
 }

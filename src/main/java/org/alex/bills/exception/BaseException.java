@@ -13,8 +13,9 @@ public class BaseException extends RuntimeException {
         this.message = message;
     }
 
-    public BaseException(Pair<?> pair) {
-        this(extractCode(pair), extractMessage(pair));
+    public BaseException(Pair<Integer, String> pair) {
+        this(pair == null ? null : pair.getKey(),
+                pair == null ? null : pair.getValue());
     }
 
     public BaseException(ResultInfo<?> resultInfo) {
@@ -31,25 +32,4 @@ public class BaseException extends RuntimeException {
         return message;
     }
 
-    private static Integer extractCode(Pair<?> pair) {
-        if (pair == null) {
-            return null;
-        }
-        Object key = pair.getKey();
-        if (key instanceof Number) {
-            return ((Number) key).intValue();
-        }
-        return null;
-    }
-
-    private static String extractMessage(Pair<?> pair) {
-        if (pair == null) {
-            return null;
-        }
-        Object value = pair.getValue();
-        if (value instanceof String) {
-            return (String) value;
-        }
-        return null;
-    }
 }
