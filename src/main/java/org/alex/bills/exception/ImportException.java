@@ -8,7 +8,7 @@ public class ImportException extends BaseException {
         super(code, message);
     }
 
-    public ImportException(Pair<?, ?> pair) {
+    public ImportException(Pair<Integer, String> pair) {
         super(pair);
     }
 
