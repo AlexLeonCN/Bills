@@ -1,7 +1,7 @@
 package org.alex.bills.controller;
 
 import org.alex.bills.commons.ResultInfo;
-import org.alex.bills.exception.ImportException;
+import org.alex.bills.commons.exception.ImportException;
 import org.alex.bills.model.BillImportResult;
 import org.alex.bills.service.ExcelService;
 import org.springframework.http.MediaType;
