@@ -1,4 +1,4 @@
-package org.alex.bills.utils;
+package org.alex.bills.commons.utils;
 
 import java.io.BufferedReader;
 import java.io.File;

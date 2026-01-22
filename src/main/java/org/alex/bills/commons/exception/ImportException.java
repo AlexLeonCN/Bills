@@ -1,4 +1,4 @@
-package org.alex.bills.exception;
+package org.alex.bills.commons.exception;
 
 import org.alex.bills.commons.Pair;
 import org.alex.bills.commons.ResultInfo;
