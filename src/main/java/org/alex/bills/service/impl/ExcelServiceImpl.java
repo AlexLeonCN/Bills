@@ -24,7 +24,7 @@ import org.alex.bills.commons.utils.SnowflakeIdGenerator;
 import org.alex.bills.constants.BillImportConstants;
 import org.alex.bills.mapper.BillMapper;
 import org.alex.bills.model.Bill;
-import org.alex.bills.model.BillImportResult;
+import org.alex.bills.model.ImportResult;
 import org.alex.bills.service.ExcelService;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -46,7 +46,7 @@ public class ExcelServiceImpl implements ExcelService {
 
     @Override
     @Transactional
-    public BillImportResult importBills(MultipartFile file) {
+    public ImportResult importBills(MultipartFile file) {
         if (file == null || file.isEmpty()) {
             throw new ImportException(ErrorConstant.Import.FILE_EMPTY);
         }
@@ -83,7 +83,7 @@ public class ExcelServiceImpl implements ExcelService {
             billMapper.insertBatch(bills);
         }
         int totalRows = Math.max(rows.size() - 1, 0);
-        return new BillImportResult(totalRows, bills.size(), skippedRows);
+        return new ImportResult(totalRows, bills.size(), skippedRows);
     }
 
     private List<List<String>> readRows(MultipartFile file) {
