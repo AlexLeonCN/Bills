@@ -13,12 +13,12 @@
     </resultMap>
 
     <insert id="insert" parameterType="org.alex.bills.model.Ledger">
-        insert into project (id, name, desc, create_time, update_time)
+        insert into ledger (id, name, desc, create_time, update_time)
         values (#{id}, #{name}, #{desc}, #{createTime}, #{updateTime})
     </insert>
 
     <update id="update" parameterType="org.alex.bills.model.Ledger">
-        update project
+        update ledger
         set name = #{name},
             desc = #{desc},
             create_time = #{createTime},
@@ -27,17 +27,17 @@
     </update>
 
     <delete id="deleteById">
-        delete from project where id = #{id}
+        delete from ledger where id = #{id}
     </delete>
 
     <select id="findById" resultMap="LedgerResultMap">
         select id, name, desc, create_time, update_time
-        from project
+        from ledger
         where id = #{id}
     </select>
 
     <select id="findAll" resultMap="LedgerResultMap">
         select id, name, desc, create_time, update_time
-        from project
+        from ledger
     </select>
 </mapper>
