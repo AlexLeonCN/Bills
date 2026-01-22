@@ -6,10 +6,10 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 @Mapper
-public interface ProjectMapper {
-    int insert(Ledger project);
+public interface LedgerMapper {
+    int insert(Ledger ledger);
 
-    int update(Ledger project);
+    int update(Ledger ledger);
 
     int deleteById(@Param("id") Long id);
 
