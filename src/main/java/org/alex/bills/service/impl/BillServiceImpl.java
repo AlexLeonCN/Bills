@@ -25,7 +25,7 @@ import org.alex.bills.constants.BillImportConstants;
 import org.alex.bills.mapper.BillMapper;
 import org.alex.bills.model.Bill;
 import org.alex.bills.model.ImportResult;
-import org.alex.bills.service.ExcelService;
+import org.alex.bills.service.BillService;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
@@ -34,13 +34,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
-public class ExcelServiceImpl implements ExcelService {
+public class BillServiceImpl implements BillService {
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("H:mm");
     private static final SnowflakeIdGenerator ID_GENERATOR = new SnowflakeIdGenerator(1, 1);
 
     private final BillMapper billMapper;
 
-    public ExcelServiceImpl(BillMapper billMapper) {
+    public BillServiceImpl(BillMapper billMapper) {
         this.billMapper = billMapper;
     }
 
