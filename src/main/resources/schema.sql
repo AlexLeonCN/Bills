@@ -1,5 +1,5 @@
-drop table if exists project;
-create table project (
+drop table if exists ledger;
+create table ledger (
     id bigint primary key,
     name varchar(255) not null,
     desc varchar(1000),
