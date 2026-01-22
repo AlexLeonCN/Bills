@@ -1,3 +1,4 @@
+drop table if exists project;
 create table project (
     id bigint primary key,
     name varchar(255) not null,
@@ -6,6 +7,7 @@ create table project (
     update_time timestamp not null
 );
 
+drop table if exists bill;
 create table bill (
     id bigint primary key,
     ledger varchar(255) not null,
