@@ -7,7 +7,7 @@ import lombok.Data;
 public class Ledger {
     private Long id;
     private String name;
-    private String desc;
+    private String description;
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
 }

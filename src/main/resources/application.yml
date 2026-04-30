@@ -1,13 +1,21 @@
 spring:
   datasource:
-    url: jdbc:h2:file:./data/billsdb;DB_CLOSE_ON_EXIT=FALSE;AUTO_SERVER=TRUE
+    url: jdbc:h2:file:${BILLS_DATA_DIR:./data}/billsdb;DB_CLOSE_ON_EXIT=FALSE;AUTO_SERVER=TRUE
     driver-class-name: org.h2.Driver
     username: sa
     password:
+  sql:
+    init:
+      mode: always
+      encoding: UTF-8
   h2:
     console:
       enabled: true
       path: /h2-console
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
 
 mybatis:
   mapper-locations: classpath:/mapper/*.xml

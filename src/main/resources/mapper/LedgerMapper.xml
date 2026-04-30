@@ -7,37 +7,37 @@
     <resultMap id="LedgerResultMap" type="org.alex.bills.model.Ledger">
         <id column="id" property="id"/>
         <result column="name" property="name"/>
-        <result column="desc" property="desc"/>
+        <result column="description" property="description"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
     </resultMap>
 
     <insert id="insert" parameterType="org.alex.bills.model.Ledger">
-        insert into project (id, name, desc, create_time, update_time)
-        values (#{id}, #{name}, #{desc}, #{createTime}, #{updateTime})
+        insert into ledger (id, name, description, create_time, update_time)
+        values (#{id}, #{name}, #{description}, #{createTime}, #{updateTime})
     </insert>
 
     <update id="update" parameterType="org.alex.bills.model.Ledger">
-        update project
+        update ledger
         set name = #{name},
-            desc = #{desc},
+            description = #{description},
             create_time = #{createTime},
             update_time = #{updateTime}
         where id = #{id}
     </update>
 
     <delete id="deleteById">
-        delete from project where id = #{id}
+        delete from ledger where id = #{id}
     </delete>
 
     <select id="findById" resultMap="LedgerResultMap">
-        select id, name, desc, create_time, update_time
-        from project
+        select id, name, description, create_time, update_time
+        from ledger
         where id = #{id}
     </select>
 
     <select id="findAll" resultMap="LedgerResultMap">
-        select id, name, desc, create_time, update_time
-        from project
+        select id, name, description, create_time, update_time
+        from ledger
     </select>
 </mapper>

@@ -1,12 +1,12 @@
-create table project (
+create table if not exists ledger (
     id bigint primary key,
     name varchar(255) not null,
-    desc varchar(1000),
+    description varchar(1000),
     create_time timestamp not null,
     update_time timestamp not null
 );
 
-create table bill (
+create table if not exists bill (
     id bigint primary key,
     ledger varchar(255) not null,
     category varchar(255),
