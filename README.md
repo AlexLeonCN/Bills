@@ -1,6 +1,8 @@
 # Bills
 
-Bills 是一个基于 Spring Boot 的账单导入应用。项目使用 JDK 21、Maven 3.9、MyBatis 和 H2，前端页面与 H2 数据库能力都随 Spring Boot 应用一起启动，打包后只需要运行一个 Jar 包即可使用。
+Bills 是一个基于 Spring Boot 的单机账单导入工具。项目使用 JDK 21、Maven 3.9、MyBatis 和 H2，前端页面与 H2 数据库能力都随 Spring Boot 应用一起启动，打包后只需要运行一个 Jar 包即可使用。
+
+项目定位为本地单机工具，不提供用户、角色、登录、注册、认证或权限管控能力。
 
 ## 技术栈
 
@@ -29,7 +31,6 @@ java -jar target/bills-0.0.1-SNAPSHOT.jar
 启动后访问：
 
 - 前端页面：http://localhost:8080/
-- H2 控制台：http://localhost:8080/h2-console
 - 账单导入接口：`POST http://localhost:8080/bill/import`
 
 H2 默认使用文件数据库，数据会写入启动目录下的 `data/billsdb`。首次启动时，应用会自动执行 `schema.sql` 创建所需表结构。
