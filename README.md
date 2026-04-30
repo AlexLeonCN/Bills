@@ -31,9 +31,11 @@ java -jar target/bills-0.0.1-SNAPSHOT.jar
 启动后访问：
 
 - 前端页面：http://localhost:8080/
+- H2 控制台：http://localhost:8080/h2-console
 - 账单导入接口：`POST http://localhost:8080/bill/import`
 
 H2 默认使用文件数据库，数据会写入启动目录下的 `data/billsdb`。首次启动时，应用会自动执行 `schema.sql` 创建所需表结构。
+H2 控制台仅用于本地查看和维护内嵌数据库，不属于应用用户、角色或权限体系。
 
 可以通过环境变量修改数据目录：
 

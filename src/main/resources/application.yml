@@ -10,7 +10,7 @@ spring:
       encoding: UTF-8
   h2:
     console:
-      enabled: false
+      enabled: true
       path: /h2-console
   servlet:
     multipart:
